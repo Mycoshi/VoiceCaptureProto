@@ -1,4 +1,4 @@
-# VoiceCaptureProti
+# VoiceCaptureProto
 
 Functioning ~100 line speech recognition software.
 
