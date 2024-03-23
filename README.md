@@ -1,9 +1,9 @@
 # VoiceCaptureProto
 
-Functioning ~100 line speech recognition software.
+## 100 line speech recognition software.
 
-takes microphone input converts through google speech to text and returns a string that is then examined for specific commands and then launches through a elif chain
-and executes command. It also has ability for confirmation sounds for user
+### takes microphone input converts through google speech to text and returns a string that is then examined for specific commands and then launches through a elif chain
+### and executes command. It also has ability for confirmation sounds for user
 
 CURRENT COMMANDS
 
