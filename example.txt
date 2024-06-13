@@ -1,0 +1,16 @@
+
+---so we're here taking notes again hopefully it's improved
+---we're trying to improve this shit again i don't know i'm trying to increase the time out so that i can like pause and it doesn't finish the sentence like the phrase time limit it said it's 60 so i want to be able to like speak with cadence and not have it freak out
+---so like these timeouts are working better
+---so we're taking notes now on whether the freaking pause threshold is a real parameter it's a 2 seconds now so i should be able to count to
+---so we're back here i've set the pause threshold to 5 seconds
+---it's definitely been set to 5 seconds and that was still at the default of 0.8 seconds so that's bullshit
+---so we're increasing the energy threshold and that same time we're increasing the pause threshold to 5 seconds the energy threshold is at 600 so with a 60-second timer this should allow me to count to
+---all right we've moved both variable changes outside of the microphone
+---i've reduced the pause threshold i don't know if that helps
+---all right i flipped the energy conversion it's at 100 and i'm wondering if
+---no i'm still flip the pause threshold outside but i'm no longer fucking with energy conversion i know that this means that i get to talk for longer now if i keep at this pace but this is still a fully formed by and i'm rambling so i'm wondering if i can just slow down and it stops doing this i really just want to be able to talk at slower speeds
+---so we're still calibrating these energy thresholds but it kicked me out in like 5 seconds on a 60 second time out that was insane so i don't know what the fuck just happened cuz that was a calibration test and this was not a calibration i don't know these pauses are supposed to be fucking 5 seconds in length i think i'm looking at them right now they're supposed to be 5 seconds this is like
+---the calibration at the top level instead of inside the take notes level so here it's set up directly after the microphone i'm hoping that that means that i can count to one mississippi in my head so i'm going to try it now and see if that worked
+---are we talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin talkin
+---so the main loop is in right now which is crazy i'm wondering if that affects everything because it seems to have done it like on a first run through but i want to see if i can count to one mississippi in my head and if that cut off i don't think it did and i'm going to try to mississippi and see if that cut off i don't know if it did now i'm going to try and mississippi i think i'm going all the way to 3 seconds here maybe four or five

@@ -12,7 +12,7 @@ from selenium import webdriver
 #ISSUES AND NEEDS SECTION
 
 #create activation keyword
-#create dict of responses
+#create dict of responses #NOT A DICT SQL DATABSE BECAUSE WE CAN UPDATE IT LIVE KEKW
 #voice repsonse
 #Translator implementation
 #implent GPTREQUEST
@@ -28,9 +28,72 @@ from selenium import webdriver
 ################################################################
 #GLOBALS
 rec = sr.Recognizer()
-text= '-1'
+text= '-1'   
 script_dir = os.path.dirname(os.path.abspath(__file__))
-sound_path = os.path.join(script_dir, 'assets', 'oyasumi.wav')
+sound_path = os.path.join(script_dir, 'assets', 'Sounds', 'processing.mp3')
+################################################################
+#Calibration
+with sr.Microphone() as source:   
+     print("Please wait. Calibrating microphone...")   
+     # listen for 5 seconds and calculate the ambient noise energy level   
+     rec.adjust_for_ambient_noise(source, duration=5)
+     rec.dynamic_energy_threshold = True  
+     
+################################
+#todo Scared of why this works, it runs once then turns false?
+#Core Functions
+def listen_with_pause_detection(recognizer, source, pause_limit=2.0, phrase_time_limit=10):
+    """
+    Listen to audio and recognize speech. Stop if a long pause is detected.
+    :param recognizer: An instance of sr.Recognizer()
+    :param source: An audio source
+    :param pause_limit: Maximum allowed pause duration (in seconds) before stopping
+    :param phrase_time_limit: Maximum duration for a single phrase (in seconds)
+    :return: Recognized text
+    """
+    print("Listening for speech...")
+    start_time = time.time()
+    while True:
+        try:
+            audio = recognizer.listen(source, timeout=pause_limit, phrase_time_limit=phrase_time_limit)
+            print("Recognizing speech...")
+            text = recognizer.recognize_google(audio)
+            print(f"Recognized text: {text}")
+
+            # Reset the timer on successful recognition
+            start_time = time.time()
+            return text  # For continuous recognition, you might want to append to a list instead
+
+        except sr.WaitTimeoutError:
+            # Check if the pause exceeds the allowed pause limit
+            if time.time() - start_time > pause_limit:
+                print("Long pause detected, stopping...")
+                break
+            else:
+                print("Pause detected, waiting for more speech...")
+        except sr.UnknownValueError:
+            print("Google Web Speech API could not understand the audio.")
+        except sr.RequestError as e:
+            print(f"Could not request results from Google Web Speech API; {e}")
+            break
+
+    return None
+
+def main():
+    recognizer = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("Adjusting for ambient noise...")
+        recognizer.adjust_for_ambient_noise(source)
+        recognized_text = listen_with_pause_detection(recognizer, source)
+        if recognized_text:
+            print(f"Final recognized text: {recognized_text}")
+        else:
+            print("No valid speech was recognized or long pause detected.")
+
+if __name__ == "__main__":
+    main()
+
+            
 
 ################################################################
 #Command Loop
@@ -43,7 +106,7 @@ def Core_Loop():
                     print('not listening')
                     text = rec.recognize_google(audio).lower()
                     print(text)
-                    if 'start listening' in text:
+                    if 'listen' in text:
                         secondary_Loop()
                         break
         except sr.UnknownValueError:
@@ -66,6 +129,11 @@ def secondary_Loop():
                 elif '3030' in text:
                     #very specific :(
                     os.system("taskkill /im vivaldi.exe /f")
+                elif 'close tab' in text:
+                    print('tab close')
+                    clost_Tab()
+                elif 'take notes' in text:
+                    take_Notes()
                 elif 'go to youtube' in text:
                     print(sound_path)
                     playsound(sound_path)
@@ -84,7 +152,7 @@ def secondary_Loop():
             
             except sr.UnknownValueError:
                 sr.Recognizer()
-                print('....?')
+                print('....Breaking Command Loop?')
 
 
 
@@ -98,9 +166,18 @@ def keystroke():
 def shutdown():
     print('Executing')
     os.system('shutdown -s')
-
-
-#
+def clost_Tab():
+    auto.hotkey('ctrl', 'w')
+def take_Notes():
+    with sr.Microphone() as source:
+        audio = rec.listen(source, timeout=5 ,phrase_time_limit=60.0)
+        text = rec.recognize_google(audio).lower()
+        print(f'{text}, written in notes')
+        try:
+            with open ('example.txt', 'a') as file:
+                file.write(f'\n---{text}')
+        except:
+            print('failure to write')
 def go2youtube():
     print('Executing')
     with sr.Microphone() as source:
@@ -115,70 +192,75 @@ def go2youtube():
         audio = rec.listen(source, phrase_time_limit=2.0)
         text = rec.recognize_google(audio).lower()
         print(text)
-        if 'first one' in text:
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('tab')
-            auto.press('enter')
-            time.sleep(1)
-            auto.press('enter')
-            time.sleep(1)
-            auto.press('left')
+        ################################
+        #TODO WEBSCRAP LINKS ON YOUTUBE
+        #RETIRING TAB LOCATOR CAUSE I HATE IT GO BACK TO WEBSCRAPER
+        #if 'first one' in text:
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('tab')
+        #    auto.press('enter')
+        #    time.sleep(1)
+        #    auto.press('enter')
+        #    time.sleep(1)
+        #    auto.press('left')
+        #else : 
+        #    secondary_Loop()
 
        
 
@@ -214,7 +296,7 @@ def go2Gpt():
 #forgot what this is or why        
 def internet4me():
         print('Executing')
-        playsound(r'C:\Users\jylau\Documents\github\VoiceCaptureProti\assets\input.mp3')
+        playsound(r'C:\Users\jylau\Documents\github\VoiceCaptureProti\assets\Sounds\input.mp3')
         with sr.Microphone() as source:
             audio = rec.listen(source, phrase_time_limit=2.0)
             text = rec.recognize_google(audio).lower()
@@ -223,7 +305,8 @@ def internet4me():
             #selenium dcriver is a fucking pain compared to webrowser BUT ILL FIGURE IT THE FUCK OUTblank
             driver = webdriver.Firefox()
             driver.get("https://www.python.org")
-            
+
+
 ##############################################################
 #RunTime
 
