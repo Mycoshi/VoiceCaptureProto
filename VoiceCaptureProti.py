@@ -5,6 +5,7 @@ from playsound import playsound
 import webbrowser as web
 import urllib.request
 import re
+from datetime import datetime
 import pyautogui as auto
 from selenium import webdriver
 
@@ -23,7 +24,7 @@ from selenium import webdriver
 
 #py audio should be installed alongside SR but is not sometimes and we went through a thing to get it in, install pipwin and then pyaudio
 
-
+#TODO Name it peresephone and add timestamps to notes
 
 ################################################################
 #GLOBALS
@@ -32,6 +33,8 @@ text= '-1'
 script_dir = os.path.dirname(os.path.abspath(__file__))
 sound_path = os.path.join(script_dir, 'assets', 'Sounds', 'processing.mp3')
 welcome_Sound = os.path.join(script_dir, 'assets', 'Sounds', 'GLaDOS_Aperture_labs_helping_you_help_u.wav')
+
+
 ################################################################
 #Calibration
 
@@ -39,8 +42,9 @@ with sr.Microphone() as source:
      print("Please wait. Calibrating microphone...")
      playsound(welcome_Sound)   
      # listen for 5 seconds and calculate the ambient noise energy level   
-     rec.adjust_for_ambient_noise(source, duration=5)
-     rec.dynamic_energy_threshold = True  
+     rec.adjust_for_ambient_noise(source, duration=3)
+     rec.dynamic_energy_threshold = True
+    
      
 ################################
 #todo Scared of why this works, it runs once then turns false?
@@ -87,12 +91,6 @@ def main():
     with sr.Microphone() as source:
         print("Adjusting for ambient noise...")
         recognizer.adjust_for_ambient_noise(source)
-        recognized_text = listen_with_pause_detection(recognizer, source)
-        if recognized_text:
-            print(f"Final recognized text: {recognized_text}")
-        else:
-            print("No valid speech was recognized or long pause detected.")
-
 if __name__ == "__main__":
     main()
 
@@ -143,9 +141,6 @@ def secondary_Loop():
                     go2youtube()  
                 elif 'google something for me' in text:
                     go2google()
-                elif 'internet this' in text:
-                    internet4me()
-                    #This is preserved for a youtube function but we are debating screen toggles and whether it is worth it. 
                 elif 'open chat' in text:
                     go2Gpt()    
                 elif 'pause' in text:
@@ -172,15 +167,28 @@ def shutdown():
 def clost_Tab():
     auto.hotkey('ctrl', 'w')
 def take_Notes():
+    recognizer = sr.Recognizer()
     with sr.Microphone() as source:
-        audio = rec.listen(source, timeout=5 ,phrase_time_limit=60.0)
-        text = rec.recognize_google(audio).lower()
-        print(f'{text}, written in notes')
-        try:
-            with open ('example.txt', 'a') as file:
-                file.write(f'\n---{text}')
-        except:
-            print('failure to write')
+        recognized_text = listen_with_pause_detection(recognizer, source)
+        if recognized_text:
+            current_timestamp = datetime.now()
+            text = recognized_text.lower()
+            try:
+                with open ('example.txt', 'a') as file:
+                    file.write(f'\n---{current_timestamp}---{text}')
+            except:
+                print('failure to write')
+        else:
+            print("No valid speech was recognized or long pause detected.")
+    #with sr.Microphone() as source:
+    #    audio = rec.listen(source, timeout=5 ,phrase_time_limit=60.0)
+    #    text = rec.recognize_google(audio).lower()
+    #    print(f'{text}, written in notes')
+    #    try:
+    #        with open ('example.txt', 'a') as file:
+    #            file.write(f'\n---{text}')
+    #    except:
+    #        print('failure to write')
 def go2youtube():
     print('Executing')
     with sr.Microphone() as source:
@@ -195,79 +203,8 @@ def go2youtube():
         audio = rec.listen(source, phrase_time_limit=2.0)
         text = rec.recognize_google(audio).lower()
         print(text)
-        ################################
-        #TODO WEBSCRAP LINKS ON YOUTUBE
-        #RETIRING TAB LOCATOR CAUSE I HATE IT GO BACK TO WEBSCRAPER
-        #if 'first one' in text:
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('tab')
-        #    auto.press('enter')
-        #    time.sleep(1)
-        #    auto.press('enter')
-        #    time.sleep(1)
-        #    auto.press('left')
-        #else : 
-        #    secondary_Loop()
+       #TODO we need to webscrap our way to the selection with selenium, hotkeys and tab method proved cumbersome. 
 
-       
-
-#worked as of 6/8/24 with default browser
 def go2google():
     print('Executing')
     with sr.Microphone() as source:
@@ -295,20 +232,6 @@ def go2Gpt():
                     else:
                         auto.typewrite(f'{input_Text}', interval=0.1)
                         auto.hotkey('ctrl', 'enter')
-
-#forgot what this is or why        
-def internet4me():
-        print('Executing')
-        playsound(r'C:\Users\jylau\Documents\github\VoiceCaptureProti\assets\Sounds\input.mp3')
-        with sr.Microphone() as source:
-            audio = rec.listen(source, phrase_time_limit=2.0)
-            text = rec.recognize_google(audio).lower()
-
-
-            #selenium dcriver is a fucking pain compared to webrowser BUT ILL FIGURE IT THE FUCK OUTblank
-            driver = webdriver.Firefox()
-            driver.get("https://www.python.org")
-
 
 ##############################################################
 #RunTime
