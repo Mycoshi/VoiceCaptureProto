@@ -1,0 +1,4 @@
+'shutdown'
+'google'
+'youtube'
+'open (path)'

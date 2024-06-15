@@ -31,10 +31,13 @@ rec = sr.Recognizer()
 text= '-1'   
 script_dir = os.path.dirname(os.path.abspath(__file__))
 sound_path = os.path.join(script_dir, 'assets', 'Sounds', 'processing.mp3')
+welcome_Sound = os.path.join(script_dir, 'assets', 'Sounds', 'GLaDOS_Aperture_labs_helping_you_help_u.wav')
 ################################################################
 #Calibration
+
 with sr.Microphone() as source:   
-     print("Please wait. Calibrating microphone...")   
+     print("Please wait. Calibrating microphone...")
+     playsound(welcome_Sound)   
      # listen for 5 seconds and calculate the ambient noise energy level   
      rec.adjust_for_ambient_noise(source, duration=5)
      rec.dynamic_energy_threshold = True  
