@@ -49,7 +49,7 @@ with sr.Microphone() as source:
 ################################
 #todo Scared of why this works, it runs once then turns false?
 #Core Functions
-def listen_with_pause_detection(recognizer, source, pause_limit=2.0, phrase_time_limit=10):
+def listen_with_pause_detection(recognizer, source, pause_limit=2.0, phrase_time_limit=60):
     """
     Listen to audio and recognize speech. Stop if a long pause is detected.
     :param recognizer: An instance of sr.Recognizer()
@@ -60,6 +60,7 @@ def listen_with_pause_detection(recognizer, source, pause_limit=2.0, phrase_time
     """
     print("Listening for speech...")
     start_time = time.time()
+    recognized_texts = ''
     while True:
         try:
             audio = recognizer.listen(source, timeout=pause_limit, phrase_time_limit=phrase_time_limit)
@@ -69,8 +70,9 @@ def listen_with_pause_detection(recognizer, source, pause_limit=2.0, phrase_time
 
             # Reset the timer on successful recognition
             start_time = time.time()
-            return text  # For continuous recognition, you might want to append to a list instead
 
+            # Append recognized text to the list
+            recognized_texts += text
         except sr.WaitTimeoutError:
             # Check if the pause exceeds the allowed pause limit
             if time.time() - start_time > pause_limit:
@@ -83,8 +85,7 @@ def listen_with_pause_detection(recognizer, source, pause_limit=2.0, phrase_time
         except sr.RequestError as e:
             print(f"Could not request results from Google Web Speech API; {e}")
             break
-
-    return None
+    return recognized_texts
 
 def main():
     recognizer = sr.Recognizer()
@@ -169,10 +170,9 @@ def clost_Tab():
 def take_Notes():
     recognizer = sr.Recognizer()
     with sr.Microphone() as source:
-        recognized_text = listen_with_pause_detection(recognizer, source)
-        if recognized_text:
+        note_text = listen_with_pause_detection(recognizer, source)
+        if note_text:
             current_timestamp = datetime.now()
-            text = recognized_text.lower()
             try:
                 with open ('example.txt', 'a') as file:
                     file.write(f'\n---{current_timestamp}---{text}')
