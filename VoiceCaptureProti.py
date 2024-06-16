@@ -37,56 +37,16 @@ welcome_Sound = os.path.join(script_dir, 'assets', 'Sounds', 'GLaDOS_Aperture_la
 
 ################################################################
 #Calibration
-
-with sr.Microphone() as source:   
-     print("Please wait. Calibrating microphone...")
-     playsound(welcome_Sound)   
+#Calibration was pointless?
+#with sr.Microphone() as source:   
+     #print("Please wait. Calibrating microphone...")
+     #playsound(welcome_Sound)   
      # listen for 5 seconds and calculate the ambient noise energy level   
-     rec.adjust_for_ambient_noise(source, duration=3)
-     rec.dynamic_energy_threshold = True
+     #rec.adjust_for_ambient_noise(source, duration=3)
+     #rec.dynamic_energy_threshold = True
     
      
 ################################
-#todo Scared of why this works, it runs once then turns false?
-#Core Functions
-def listen_with_pause_detection(recognizer, source, pause_limit=2.0, phrase_time_limit=60):
-    """
-    Listen to audio and recognize speech. Stop if a long pause is detected.
-    :param recognizer: An instance of sr.Recognizer()
-    :param source: An audio source
-    :param pause_limit: Maximum allowed pause duration (in seconds) before stopping
-    :param phrase_time_limit: Maximum duration for a single phrase (in seconds)
-    :return: Recognized text
-    """
-    print("Listening for speech...")
-    start_time = time.time()
-    recognized_texts = ''
-    while True:
-        try:
-            audio = recognizer.listen(source, timeout=pause_limit, phrase_time_limit=phrase_time_limit)
-            print("Recognizing speech...")
-            text = recognizer.recognize_google(audio)
-            print(f"Recognized text: {text}")
-
-            # Reset the timer on successful recognition
-            start_time = time.time()
-
-            # Append recognized text to the list
-            recognized_texts += text
-        except sr.WaitTimeoutError:
-            # Check if the pause exceeds the allowed pause limit
-            if time.time() - start_time > pause_limit:
-                print("Long pause detected, stopping...")
-                break
-            else:
-                print("Pause detected, waiting for more speech...")
-        except sr.UnknownValueError:
-            print("Google Web Speech API could not understand the audio.")
-        except sr.RequestError as e:
-            print(f"Could not request results from Google Web Speech API; {e}")
-            break
-    return recognized_texts
-
 def main():
     recognizer = sr.Recognizer()
     with sr.Microphone() as source:
@@ -105,15 +65,16 @@ def Core_Loop():
         try:
             with sr.Microphone() as source:
                     audio = rec.listen(source, phrase_time_limit=3.0)
-                    print('not listening')
+                    print(f'waiting for Listen Command')
                     text = rec.recognize_google(audio).lower()
                     print(text)
                     if 'listen' in text:
+                        print('Now listening')
                         secondary_Loop()
                         break
         except sr.UnknownValueError:
             sr.Recognizer()
-            print('?')
+            print('Restarting Core Loop...')
 
 def secondary_Loop():
      while True:
@@ -147,7 +108,8 @@ def secondary_Loop():
                 elif 'pause' in text:
                     keystroke()
                 else:
-                    sr.Recognizer()
+                    print('restarting Command loop')
+                    secondary_Loop()
             
             except sr.UnknownValueError:
                 sr.Recognizer()
@@ -168,18 +130,19 @@ def shutdown():
 def clost_Tab():
     auto.hotkey('ctrl', 'w')
 def take_Notes():
-    recognizer = sr.Recognizer()
-    with sr.Microphone() as source:
-        note_text = listen_with_pause_detection(recognizer, source)
-        if note_text:
-            current_timestamp = datetime.now()
-            try:
-                with open ('example.txt', 'a') as file:
-                    file.write(f'\n---{current_timestamp}---{text}')
-            except:
-                print('failure to write')
-        else:
-            print("No valid speech was recognized or long pause detected.")
+    while True:
+        with sr.Microphone() as source:
+            audio = rec.listen(source, phrase_time_limit=3.0)
+            text = rec.recognize_google(audio).lower()
+            print(text)
+            print('note_text: ', text)
+        current_timestamp = datetime.now()
+        try:
+            with open ('example.txt', 'a') as file:
+                file.write(f'\n---{current_timestamp}---{text}')
+                print('Wrote to file')
+        except:
+            print('failure to write')
     #with sr.Microphone() as source:
     #    audio = rec.listen(source, timeout=5 ,phrase_time_limit=60.0)
     #    text = rec.recognize_google(audio).lower()
