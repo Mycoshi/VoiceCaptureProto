@@ -74,7 +74,7 @@ def Core_Loop():
                         break
         except sr.UnknownValueError:
             sr.Recognizer()
-            print('Restarting Core Loop...')
+            print('...')
 
 def secondary_Loop():
      while True:
@@ -130,28 +130,27 @@ def shutdown():
 def clost_Tab():
     auto.hotkey('ctrl', 'w')
 def take_Notes():
-    while True:
+    complete_note = ''
+    looping = True
+    while looping == True:
         with sr.Microphone() as source:
-            audio = rec.listen(source, phrase_time_limit=3.0)
+            audio = rec.listen(source, phrase_time_limit=10.0)
             text = rec.recognize_google(audio).lower()
             print(text)
+            complete_note += text    
             print('note_text: ', text)
-        current_timestamp = datetime.now()
-        try:
-            with open ('example.txt', 'a') as file:
-                file.write(f'\n---{current_timestamp}---{text}')
-                print('Wrote to file')
-        except:
-            print('failure to write')
-    #with sr.Microphone() as source:
-    #    audio = rec.listen(source, timeout=5 ,phrase_time_limit=60.0)
-    #    text = rec.recognize_google(audio).lower()
-    #    print(f'{text}, written in notes')
-    #    try:
-    #        with open ('example.txt', 'a') as file:
-    #            file.write(f'\n---{text}')
-    #    except:
-    #        print('failure to write')
+        if "stop listening" in text:
+                print("Stop command detected. Exiting loop.")
+                break
+
+    current_timestamp = datetime.now()
+    try:
+        with open ('example.txt', 'a') as file:
+            file.write(f'\n---{current_timestamp}---{complete_note}')
+            print('Wrote to file')
+    except:
+        print('failure to write')
+    
 def go2youtube():
     print('Executing')
     with sr.Microphone() as source:
