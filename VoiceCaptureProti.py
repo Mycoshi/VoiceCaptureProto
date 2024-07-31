@@ -7,7 +7,11 @@ import urllib.request
 import re
 from datetime import datetime
 import pyautogui as auto
-from selenium import webdriver
+import noisereduce as nr
+import numpy as np
+import pywinauto
+import subprocess
+import threading
 
 ################################################################
 #ISSUES AND NEEDS SECTION
@@ -31,30 +35,37 @@ from selenium import webdriver
 rec = sr.Recognizer()
 text= '-1'   
 script_dir = os.path.dirname(os.path.abspath(__file__))
+url='-1'
+Talking = False
+talking_thread = None
+
 sound_path = os.path.join(script_dir, 'assets', 'Sounds', 'processing.mp3')
 welcome_Sound = os.path.join(script_dir, 'assets', 'Sounds', 'GLaDOS_Aperture_labs_helping_you_help_u.wav')
 
 
+base_sound_path = os.path.join(script_dir, 'assets', 'Sounds')
+for file in os.listdir(base_sound_path):
+    full_path = os.path.join(base_sound_path, file)
+
 ################################################################
 #Calibration
-#Calibration was pointless?
-#with sr.Microphone() as source:   
-     #print("Please wait. Calibrating microphone...")
-     #playsound(welcome_Sound)   
-     # listen for 5 seconds and calculate the ambient noise energy level   
-     #rec.adjust_for_ambient_noise(source, duration=3)
-     #rec.dynamic_energy_threshold = True
-    
-     
-################################
-def main():
-    recognizer = sr.Recognizer()
-    with sr.Microphone() as source:
-        print("Adjusting for ambient noise...")
-        recognizer.adjust_for_ambient_noise(source)
-if __name__ == "__main__":
-    main()
+def preprocess_audio(audio_data):
+    audio_np = np.frombuffer(audio_data, dtype=np.int16)
+    cleaned_audio = nr.reduce_noise(y=audio_np, sr=16000)
+    return cleaned_audio.tobytes()
 
+# Function to recognize audio with preprocessing
+def recognize_audio(recognizer, source):
+    try:
+        audio = recognizer.listen(source, timeout=7, phrase_time_limit=15)
+        cleaned_audio = preprocess_audio(audio.get_raw_data())
+        return recognizer.recognize_google(sr.AudioData(cleaned_audio, source.SAMPLE_RATE, source.SAMPLE_WIDTH)).lower()
+    except sr.UnknownValueError:
+        print("Unable to understand the audio.")
+        return None
+    except sr.RequestError as e:
+        print(f"Error with the speech recognition service: {e}")
+        return None
             
 
 ################################################################
@@ -64,58 +75,115 @@ def Core_Loop():
     while True:
         try:
             with sr.Microphone() as source:
-                    audio = rec.listen(source, phrase_time_limit=3.0)
-                    print(f'waiting for Listen Command')
-                    text = rec.recognize_google(audio).lower()
-                    print(text)
-                    if 'listen' in text:
-                        print('Now listening')
-                        secondary_Loop()
-                        break
+                audio = rec.listen(source, phrase_time_limit=3.0)
+                text = rec.recognize_google(audio).lower()
+                print(text)
+                
+                # Check if the activation phrase is present in the recognized text
+                if 'juno' in text or 'do you know' in text:
+                    print('Juno Hears')
+                    secondary_Loop()
+                else:
+                    print('Activation keyword not detected.')
         except sr.UnknownValueError:
-            sr.Recognizer()
-            print('...')
+            print('Unable to understand the audio.')
+        except sr.RequestError as e:
+            print(f'Error with the speech recognition service: {e}')
 
 def secondary_Loop():
+     playsound
      while True:
-        with sr.Microphone() as source:
-            audio = rec.listen(source, phrase_time_limit=3.0)
-            text = rec.recognize_google(audio).lower()
-            print(text)
-            try:
+        try:
+            with sr.Microphone() as source:
+                audio = rec.listen(source, phrase_time_limit=7.0)
+                text = rec.recognize_google(audio).lower()
+                print(text)
+
                 if '11:11' in text:
                     Core_Loop()
                     break
                 elif 'we are done' in text:
                     playsound(sound_path)
                     shutdown()
+                elif "i'm talking" in text:
+                    start_talking()
+                elif "internet" in text:
+                    focus_vivaldi()    
                 elif '3030' in text:
-                    #very specific :(
                     os.system("taskkill /im vivaldi.exe /f")
                 elif 'close tab' in text:
-                    print('tab close')
-                    clost_Tab()
+                    close_Tab()
                 elif 'take notes' in text:
                     take_Notes()
                 elif 'go to youtube' in text:
-                    print(sound_path)
                     playsound(sound_path)
-                    go2youtube()  
+                    go2youtube()
                 elif 'google something for me' in text:
                     go2google()
-                elif 'open chat' in text:
-                    go2Gpt()    
+                elif 'open chat' in text or 'go to chat' in text:
+                    go2Gpt()
                 elif 'pause' in text:
                     keystroke()
                 else:
-                    print('restarting Command loop')
-                    secondary_Loop()
-            
-            except sr.UnknownValueError:
-                sr.Recognizer()
-                print('....Breaking Command Loop?')
+                    print('Unknown command. Restarting loop.')
 
+        except sr.UnknownValueError:
+            print('Returning to Command Loop UnknownValueError.')
+        except sr.RequestError as e:
+            print(f'Error with the speech recognition service: {e}')
 
+def start_talking():
+    global Talking, talking_thread
+    if Talking:
+        print("Already talking.")
+        return
+    Talking = True
+    talking_thread = threading.Thread(target=talk_thread)
+    talking_thread.start()
+
+def stop_talking():
+    global Talking
+    Talking = False
+    if talking_thread:
+        talking_thread.join()
+    print("Stopped talking.")
+    
+def talk_thread():
+   global Talking
+   while Talking:
+        try:
+            with sr.Microphone() as source:
+                audio = rec.listen(source, phrase_time_limit=10.0)
+                input_text = rec.recognize_google(audio).lower()
+                if "i'm done" in input_text or 'quit' in input_text:
+                    print("Stop talking.")
+                    Talking = False
+                else:
+                    auto.typewrite(f'{input_text}', interval=0.1)
+                    auto.hotkey('ctrl', 'enter')
+        except Exception as e:
+            print(f'Error during talking: {e}')
+            start_talking()
+
+def focus_vivaldi():
+    try:
+        # Attempt to connect to Vivaldi
+        app = pywinauto.Application().connect(title_re=".*Vivaldi.*")
+        window = app.window(title_re=".*Vivaldi.*")
+        window.set_focus()
+        print("Focused on existing Vivaldi window.")
+    except pywinauto.findwindows.ElementNotFoundError:
+        # If Vivaldi is not running, open a new window
+        print("Vivaldi not found, opening a new window.")
+        vivaldi_path = r'C:\Users\jylau\AppData\Local\Vivaldi\Application\vivaldi.exe'
+        
+        # Verify if the path is correct and the file is executable
+        if os.path.exists(vivaldi_path):
+            # Open Vivaldi with the provided URL
+            subprocess.Popen([vivaldi_path, url])
+            time.sleep(10)  # Wait for Vivaldi to open and load
+        else:
+            print(f"Vivaldi executable not found at {vivaldi_path}")
 
 
 ########################################################################
@@ -127,7 +195,8 @@ def keystroke():
 def shutdown():
     print('Executing')
     os.system('shutdown -s')
-def clost_Tab():
+
+def close_Tab():
     auto.hotkey('ctrl', 'w')
 def take_Notes():
     complete_note = ''
@@ -170,34 +239,16 @@ def go2youtube():
 def go2google():
     print('Executing')
     with sr.Microphone() as source:
-        audio = rec.listen(source, phrase_time_limit=10.0)
+        audio = rec.listen(source, timeout=10, phrase_time_limit=10.0)
         text = rec.recognize_google(audio).lower().replace(' ','+' )
         web.open_new(f'https://www.google.com/search?q={text}')
 
 def go2Gpt():
-        print('Executing')
-        web.open_new(f'https://chatgpt.com')
-        time.sleep(.5)
-        with sr.Microphone() as source:
-            audio = rec.listen(source, phrase_time_limit=5.0)
-            input_Text = rec.recognize_google(audio).lower()
-            auto.typewrite(f'{input_Text}', interval=0.1)
-            auto.hotkey('ctrl', 'enter')
-            chatting = True
-            print('chatting')
-            while chatting == True:
-                with sr.Microphone() as source:
-                    audio = rec.listen(source, phrase_time_limit=5.0)
-                    input_Text = rec.recognize_google(audio).lower()
-                    if 'im done talking' in input_Text:
-                        break
-                    else:
-                        auto.typewrite(f'{input_Text}', interval=0.1)
-                        auto.hotkey('ctrl', 'enter')
-
+        focus_vivaldi('https://chat.openai.com')
+        start_talking()
 ##############################################################
 #RunTime
 
-Core_Loop()
+secondary_Loop()
 
 
