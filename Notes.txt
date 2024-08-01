@@ -1,0 +1,5 @@
+
+---2024-08-01 10:07:00.812077---okay so we need to fix the note taker to refactor it into aa function that can be applied across multiple other functions
+
+---2024-08-01 10:31:34.696146---we're trying to evaluate whether the stop listening command is working
+---2024-08-01 10:41:10.729574---so the talking loop isit's activating improperly at least within the open gbt loopexiting properly well it is an exiting properly in the initiationinside the command loopstop listening

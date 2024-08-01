@@ -10,6 +10,8 @@ import pyautogui as auto
 import noisereduce as nr
 import numpy as np
 import pywinauto
+from pywinauto import Application
+from pywinauto.findwindows import ElementNotFoundError
 import subprocess
 import threading
 
@@ -92,6 +94,7 @@ def Core_Loop():
 
 def secondary_Loop():
      playsound
+     print('Command Loop')
      while True:
         try:
             with sr.Microphone() as source:
@@ -105,16 +108,20 @@ def secondary_Loop():
                 elif 'we are done' in text:
                     playsound(sound_path)
                     shutdown()
-                elif "i'm talking" in text:
+                elif "start talking" in text:
                     start_talking()
+                elif "start talking" in text:
+                    stop_talking()
                 elif "internet" in text:
                     focus_vivaldi()    
                 elif '3030' in text:
                     os.system("taskkill /im vivaldi.exe /f")
                 elif 'close tab' in text:
                     close_Tab()
-                elif 'take notes' in text:
+                elif 'take notes' in text or 'open notes' in text:
                     take_Notes()
+                elif 'open diary' in text:
+                    open_Diary()
                 elif 'go to youtube' in text:
                     playsound(sound_path)
                     go2youtube()
@@ -165,14 +172,14 @@ def talk_thread():
             print(f'Error during talking: {e}')
             start_talking()
 
-def focus_vivaldi():
+def focus_vivaldi(url=""):
     try:
-        # Attempt to connect to Vivaldi
-        app = pywinauto.Application().connect(title_re=".*Vivaldi.*")
+        # Attempt to connect to an existing Vivaldi window
+        app = Application().connect(title_re=".*Vivaldi.*")
         window = app.window(title_re=".*Vivaldi.*")
         window.set_focus()
         print("Focused on existing Vivaldi window.")
-    except pywinauto.findwindows.ElementNotFoundError:
+    except ElementNotFoundError:
         # If Vivaldi is not running, open a new window
         print("Vivaldi not found, opening a new window.")
         vivaldi_path = r'C:\Users\jylau\AppData\Local\Vivaldi\Application\vivaldi.exe'
@@ -180,8 +187,20 @@ def focus_vivaldi():
         # Verify if the path is correct and the file is executable
         if os.path.exists(vivaldi_path):
             # Open Vivaldi with the provided URL
-            subprocess.Popen([vivaldi_path, url])
+            if url:
+                subprocess.Popen([vivaldi_path, url])
+            else:
+                subprocess.Popen([vivaldi_path])
             time.sleep(10)  # Wait for Vivaldi to open and load
+
+            # Attempt to connect to the new Vivaldi window
+            try:
+                app = Application().connect(title_re=".*Vivaldi.*")
+                window = app.window(title_re=".*Vivaldi.*")
+                window.set_focus()
+                print("Focused on new Vivaldi window.")
+            except ElementNotFoundError:
+                print("Failed to focus on new Vivaldi window.")
         else:
             print(f"Vivaldi executable not found at {vivaldi_path}")
 
@@ -209,14 +228,37 @@ def take_Notes():
             complete_note += text    
             print('note_text: ', text)
         if "stop listening" in text:
-                print("Stop command detected. Exiting loop.")
-                break
+            text = text.replace("stop listening", "")
+            looping = False
 
     current_timestamp = datetime.now()
     try:
-        with open ('example.txt', 'a') as file:
+        with open ('Notes.txt', 'a') as file:
             file.write(f'\n---{current_timestamp}---{complete_note}')
             print('Wrote to file')
+    except:
+        print('failure to write')
+
+def open_Diary():
+    print('diary open')
+    complete_note = ''
+    looping = True
+    while looping == True:
+        with sr.Microphone() as source:
+            audio = rec.listen(source, phrase_time_limit=10.0)
+            text = rec.recognize_google(audio).lower()
+            print(text)
+            complete_note += text    
+            print('note_text: ', text)
+        if "stop listening" in text:
+            text = text.replace("stop listening", "")
+            looping = False
+
+    current_timestamp = datetime.now()
+    try:
+        with open ('Diary.txt', 'a') as file:
+            file.write(f'\n---{current_timestamp}---{complete_note}')
+            print('Wrote to file, Diary Closed?')
     except:
         print('failure to write')
     
@@ -245,7 +287,6 @@ def go2google():
 
 def go2Gpt():
         focus_vivaldi('https://chat.openai.com')
-        start_talking()
 ##############################################################
 #RunTime
 
