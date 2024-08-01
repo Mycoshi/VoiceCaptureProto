@@ -110,7 +110,7 @@ def secondary_Loop():
                     shutdown()
                 elif "start talking" in text:
                     start_talking()
-                elif "start talking" in text:
+                elif "stop talking" in text:
                     stop_talking()
                 elif "internet" in text:
                     focus_vivaldi()    
