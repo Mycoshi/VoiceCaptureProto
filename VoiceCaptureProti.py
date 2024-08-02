@@ -18,7 +18,6 @@ import threading
 ################################################################
 #ISSUES AND NEEDS SECTION
 
-#create activation keyword
 #create dict of responses #NOT A DICT SQL DATABSE BECAUSE WE CAN UPDATE IT LIVE KEKW
 #voice repsonse
 #Translator implementation
@@ -28,9 +27,7 @@ import threading
 #Enable choice of videos of youtube.
 ###### ISSUES ##########
 
-#py audio should be installed alongside SR but is not sometimes and we went through a thing to get it in, install pipwin and then pyaudio
-
-#TODO Name it peresephone and add timestamps to notes
+#This is moved to Notes for speed
 
 ################################################################
 #GLOBALS
@@ -221,15 +218,22 @@ def take_Notes():
     complete_note = ''
     looping = True
     while looping == True:
-        with sr.Microphone() as source:
-            audio = rec.listen(source, phrase_time_limit=10.0)
-            text = rec.recognize_google(audio).lower()
-            print(text)
-            complete_note += text    
-            print('note_text: ', text)
-        if "stop listening" in text:
-            text = text.replace("stop listening", "")
-            looping = False
+        try:
+            with sr.Microphone() as source:
+                print("Listening...")
+                audio = rec.listen(source, phrase_time_limit=10.0)
+                text = rec.recognize_google(audio).lower()
+                print(text)
+                complete_note += text + " "
+                if "stop listening" in text:
+                    complete_note = complete_note.replace("stop listening", "").strip()
+                    looping = False
+        except sr.UnknownValueError:
+            print("Google Speech Recognition could not understand audio, restarting microphone...")
+        except sr.RequestError as e:
+            print(f"Could not request results from Google Speech Recognition service; {e}. Restarting microphone...")
+        except Exception as e:
+            print(f"An error occurred: {e}. Restarting microphone...")
 
     current_timestamp = datetime.now()
     try:
@@ -248,10 +252,11 @@ def open_Diary():
             audio = rec.listen(source, phrase_time_limit=10.0)
             text = rec.recognize_google(audio).lower()
             print(text)
-            complete_note += text    
+            complete_note += text + " "
             print('note_text: ', text)
-        if "stop listening" in text:
-            text = text.replace("stop listening", "")
+        if "end diary" in text:
+            complete_note = complete_note.replace("end diary", "").strip()
+            print(complete_note)
             looping = False
 
     current_timestamp = datetime.now()
@@ -276,7 +281,7 @@ def go2youtube():
         audio = rec.listen(source, phrase_time_limit=2.0)
         text = rec.recognize_google(audio).lower()
         print(text)
-       #TODO we need to webscrap our way to the selection with selenium, hotkeys and tab method proved cumbersome. 
+       #TODO we need to webscrap our way to the selection with selenium, hotkeys and tab method proved cumbersome. SELIENUM IS NOT OK WITH VIVALDI
 
 def go2google():
     print('Executing')
