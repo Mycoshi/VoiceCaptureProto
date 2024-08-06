@@ -129,13 +129,13 @@ def secondary_Loop():
                 elif 'pause' in text:
                     keystroke()
                 else:
-                    print('Unknown command. Restarting loop.')
+                    print('Restarting Command loop.')
 
         except sr.UnknownValueError:
             print('Returning to Command Loop UnknownValueError.')
         except sr.RequestError as e:
             print(f'Error with the speech recognition service: {e}')
-
+#Talking Loops
 def start_talking():
     global Talking, talking_thread
     if Talking:
@@ -154,21 +154,36 @@ def stop_talking():
     
 def talk_thread():
    global Talking
+   complete_note = ' '
    while Talking:
         try:
             with sr.Microphone() as source:
-                audio = rec.listen(source, phrase_time_limit=10.0)
+                audio = rec.listen(source, phrase_time_limit=15.0)
                 input_text = rec.recognize_google(audio).lower()
+                
                 if "i'm done" in input_text or 'quit' in input_text:
                     print("Stop talking.")
                     Talking = False
-                else:
-                    auto.typewrite(f'{input_text}', interval=0.1)
+                    break
+
+                auto.typewrite(f'{input_text}', interval=0.1)
+                print('Is this correct?')
+                time.sleep(3)
+
+                with sr.Microphone() as source:
+                    audio = rec.listen(source, phrase_time_limit=5.0)
+                    confirm_text = rec.recognize_google(audio).lower()
+                print(confirm_text)    
+                if 'yes' in confirm_text:
                     auto.hotkey('ctrl', 'enter')
+                else:
+                    auto.hotkey('ctrl', 'a')
+                    auto.press('delete')
+
         except Exception as e:
             print(f'Error during talking: {e}')
-            start_talking()
-
+            time.sleep(1)  # Optional: wait before retrying to avoid rapid looping
+#Internet Functions
 def focus_vivaldi(url=""):
     try:
         # Attempt to connect to an existing Vivaldi window
@@ -225,7 +240,7 @@ def take_Notes():
                 text = rec.recognize_google(audio).lower()
                 print(text)
                 complete_note += text + " "
-                if "stop listening" in text:
+                if "stop listening" in text or 'end note':
                     complete_note = complete_note.replace("stop listening", "").strip()
                     looping = False
         except sr.UnknownValueError:
@@ -248,16 +263,23 @@ def open_Diary():
     complete_note = ''
     looping = True
     while looping == True:
-        with sr.Microphone() as source:
-            audio = rec.listen(source, phrase_time_limit=10.0)
-            text = rec.recognize_google(audio).lower()
-            print(text)
-            complete_note += text + " "
-            print('note_text: ', text)
-        if "end diary" in text:
-            complete_note = complete_note.replace("end diary", "").strip()
-            print(complete_note)
-            looping = False
+        try:
+            with sr.Microphone() as source:
+                audio = rec.listen(source, phrase_time_limit=10.0)
+                text = rec.recognize_google(audio).lower()
+                print(text)
+                complete_note += text + " "
+                print('note_text: ', text)
+            if "end diary" in text:
+                complete_note = complete_note.replace("end diary", "").strip()
+                print(complete_note)
+                looping = False
+        except sr.UnknownValueError:
+                print("Google Speech Recognition could not understand audio, restarting microphone...")
+        except sr.RequestError as e:
+                print(f"Could not request results from Google Speech Recognition service; {e}. Restarting microphone...")
+        except Exception as e:
+                print(f"An error occurred: {e}. Restarting microphone...")
 
     current_timestamp = datetime.now()
     try:
