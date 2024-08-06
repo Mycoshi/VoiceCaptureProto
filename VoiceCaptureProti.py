@@ -135,6 +135,8 @@ def secondary_Loop():
             print('Returning to Command Loop UnknownValueError.')
         except sr.RequestError as e:
             print(f'Error with the speech recognition service: {e}')
+
+            
 #Talking Loops
 def start_talking():
     global Talking, talking_thread
@@ -168,8 +170,6 @@ def talk_thread():
 
                 auto.typewrite(f'{input_text}', interval=0.1)
                 print('Is this correct?')
-                time.sleep(3)
-
                 with sr.Microphone() as source:
                     audio = rec.listen(source, phrase_time_limit=5.0)
                     confirm_text = rec.recognize_google(audio).lower()
@@ -182,7 +182,8 @@ def talk_thread():
 
         except Exception as e:
             print(f'Error during talking: {e}')
-            time.sleep(1)  # Optional: wait before retrying to avoid rapid looping
+            time.sleep(1)
+
 #Internet Functions
 def focus_vivaldi(url=""):
     try:
