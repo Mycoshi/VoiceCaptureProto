@@ -1,49 +1,62 @@
-import datetime
-import pickle
-import os
-from google_auth_oauthlib.flow import Flow, InstalledAppFlow
+from google.oauth2 import service_account
+from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
-from google.auth.transport.requests import Request
+
+SCOPES = ['https://www.googleapis.com/auth/tasks']
 
 
-def Create_Service(client_secret_file, api_name, api_version, *scopes):
-    print(client_secret_file, api_name, api_version, scopes, sep='-')
-    CLIENT_SECRET_FILE = client_secret_file
-    API_SERVICE_NAME = api_name
-    API_VERSION = api_version
-    SCOPES = [scope for scope in scopes[0]]
-    print(SCOPES)
+#Global Variables
+taskText = ''
 
-    cred = None
+def argument_inputs():
+    global taskText
+    task = 'Butts'
+    taskText = task 
 
-    pickle_file = f'token_{API_SERVICE_NAME}_{API_VERSION}.pickle'
-    # print(pickle_file)
+def authenticate():
+    flow = InstalledAppFlow.from_client_secrets_file(
+        'Tasks/client_secret_file.json', SCOPES)
+    creds = flow.run_local_server(port=0)
+    service = build('tasks', 'v1', credentials=creds)
+    return service
 
-    if os.path.exists(pickle_file):
-        with open(pickle_file, 'rb') as token:
-            cred = pickle.load(token)
+def get_task_lists(service):
+    results = service.tasklists().list().execute()
+    items = results.get('items', [])
+    return items
 
-    if not cred or not cred.valid:
-        if cred and cred.expired and cred.refresh_token:
-            cred.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                CLIENT_SECRET_FILE, SCOPES)
-            cred = flow.run_local_server()
+def create_task_list(service, title):
+    task_list = {
+        'title': title
+    }
+    result = service.tasklists().insert(body=task_list).execute()
+    return result
 
-        with open(pickle_file, 'wb') as token:
-            pickle.dump(cred, token)
+def add_task(service, task_list_id, title):
+    task = {
+        'title': title
+    }
+    result = service.tasks().insert(tasklist=task_list_id, body=task).execute()
+    return result
 
-    try:
-        service = build(API_SERVICE_NAME, API_VERSION, credentials=cred)
-        print(API_SERVICE_NAME, 'service created successfully')
-        return service
-    except Exception as e:
-        print(e)
-        print(f'Failed to create service instance for {API_SERVICE_NAME}')
-        os.remove(pickle_file)
-        return None
+#RUN
+service = authenticate()
+argument_inputs()
 
-def convert_to_RFC_datetime(year=1900, month=1, day=1, hour=0, minute=0):
-    dt = datetime.datetime(year, month, day, hour, minute, 0, 000).isoformat() + 'Z'
-    return dt
+# Retrieve and print existing task lists
+task_lists = get_task_lists(service)
+print("Existing task lists:")
+for task_list in task_lists:
+    print(f"{task_list['id']}: {task_list['title']}")
+
+# Assume you want to add a task to the first task list in the list
+if task_lists:
+    selected_task_list_id = task_lists[0]['id']
+    selected_task_list_title = task_lists[0]['title']
+    print(f"Adding task to the task list: {selected_task_list_title}")
+
+    # Add a new task to the selected task list
+    new_task = add_task(service, selected_task_list_id, taskText)
+    print(f"Task added: {new_task['title']}")
+else:
+    print("No task lists found.")
