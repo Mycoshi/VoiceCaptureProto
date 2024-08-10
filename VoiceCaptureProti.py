@@ -1,5 +1,6 @@
 import speech_recognition as sr
 import os
+import sys
 import time
 from playsound import playsound
 import webbrowser as web
@@ -14,6 +15,12 @@ from pywinauto import Application
 from pywinauto.findwindows import ElementNotFoundError
 import subprocess
 import threading
+
+#sys directory adds
+sys.path.append(os.path.join(os.path.dirname(__file__), 'Tasks'))
+
+#personal files
+import JunoTasks
 
 ################################################################
 #ISSUES AND NEEDS SECTION
@@ -230,6 +237,9 @@ def shutdown():
 
 def close_Tab():
     auto.hotkey('ctrl', 'w')
+#Talk Functons
+def add_Task():
+   os.system('python JunoTasks.py')
 def take_Notes():
     complete_note = ''
     looping = True
