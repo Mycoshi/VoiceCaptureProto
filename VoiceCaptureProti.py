@@ -16,11 +16,6 @@ from pywinauto.findwindows import ElementNotFoundError
 import subprocess
 import threading
 
-#sys directory adds
-sys.path.append(os.path.join(os.path.dirname(__file__), 'Tasks'))
-
-#personal files
-import JunoTasks
 
 ################################################################
 #ISSUES AND NEEDS SECTION
@@ -126,6 +121,11 @@ def secondary_Loop():
                     take_Notes()
                 elif 'open diary' in text:
                     open_Diary()
+                elif 'add task' in text:
+                     add_TasksWithVoice()
+                     print('what task?')
+                     time.sleep(5)
+                     run_Tasks()
                 elif 'go to youtube' in text:
                     playsound(sound_path)
                     go2youtube()
@@ -238,8 +238,29 @@ def shutdown():
 def close_Tab():
     auto.hotkey('ctrl', 'w')
 #Talk Functons
-def add_Task():
-   os.system('python JunoTasks.py')
+def add_TasksWithVoice():
+    print('')
+    note = ''
+    try:
+        with sr.Microphone() as source:
+                audio = rec.listen(source, phrase_time_limit=5.0)
+                text = rec.recognize_google(audio).lower()
+                print(text)
+                note = text 
+                print(text)
+        if "end" in text:
+                print(note)
+    except sr.UnknownValueError:
+                print("Google Speech Recognition could not understand audio, restarting microphone...")
+    except sr.RequestError as e:
+                print(f"Could not request results from Google Speech Recognition service; {e}. Restarting microphone...")
+    except Exception as e:
+                print(f"An error occurred: {e}. Restarting microphone...")
+    return note
+def run_Tasks():
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    juno_tasks_path = os.path.join(script_dir, 'Tasks', 'JunoTasks.py')
+    os.system(f'python "{juno_tasks_path}"')
 def take_Notes():
     complete_note = ''
     looping = True

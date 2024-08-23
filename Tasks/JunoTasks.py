@@ -1,6 +1,13 @@
+import sys
+import os
+
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, parent_dir)
+
 from google.oauth2 import service_account
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
+from VoiceCaptureProti import add_TasksWithVoice
 
 SCOPES = ['https://www.googleapis.com/auth/tasks']
 
