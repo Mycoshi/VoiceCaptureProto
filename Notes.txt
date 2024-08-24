@@ -1,3 +1,6 @@
 
 ---2024-08-01 22:56:02.487405---so we need to refactor note-taking basically we have a couple of essential arguments that we need to create into a function first ones the start and stop function second one is the document we write into
 ---2024-08-06 09:47:36.420444---so what we need to do is take the talking thread we need a little bit back in on itself in the same way that we have it done in the notes in the diary section and then we need to have a print progressive inputs and ask for confirmation before printing a note end note
+---2024-08-23 16:54:42.382617---so i guess we need to write and gooey
+---2024-08-23 16:55:10.119699---we need to write a gui for the notes and the diary
+---2024-08-23 16:55:46.301353---we need to write a class for the command loop or the listening loop
