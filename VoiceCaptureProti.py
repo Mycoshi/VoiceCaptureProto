@@ -15,10 +15,13 @@ from pywinauto import Application
 from pywinauto.findwindows import ElementNotFoundError
 import subprocess
 import threading
+import pymongo
 
 
 ################################################################
 #ISSUES AND NEEDS SECTION
+#ARE WE ACTUALLY USING PLASOUND
+#build in time / countdown/clock
 
 #create dict of responses #NOT A DICT SQL DATABSE BECAUSE WE CAN UPDATE IT LIVE KEKW
 #voice repsonse
@@ -314,17 +317,27 @@ def take_Notes():
             print('Wrote to file')
     except:
         print('failure to write')
-
+#TODO GUI THIS TO A BROWSE ALONG WITH NOTES FOR VIEWING MAYBE THE WHOLE THINGSHOULD BE AN APP
 def open_Diary():
     print('diary open')
     chatterbox('diary')
     current_timestamp = datetime.now()
-    try:
-        with open ('Diary.txt', 'a') as file:
-            file.write(f'\n---{current_timestamp}---{complete_note}')
-            print('Wrote to file, Diary Closed?')
+
+    ###MONGO DB WORK HERE
+
+    try:    
+        myclient = pymongo.MongoClient("mongodb://localhost:27017/")
+        mydb = myclient["mydatabase"]
+        mycol = mydb["DiaryDB"]
+
+        mydict = { "Timestamp": f"{current_timestamp}", "Note": f"{complete_note}" }
+
+        x = mycol.insert_one(mydict)
+
+        print(x.inserted_id)
     except:
-        print('failure to write')
+        print('Write Diay Failure')
+        pass
     
 def go2youtube():
     print('Executing')
