@@ -15,6 +15,7 @@ from pywinauto import Application
 from pywinauto.findwindows import ElementNotFoundError
 import subprocess
 import threading
+import pymongo
 
 
 ################################################################
@@ -320,11 +321,19 @@ def open_Diary():
     chatterbox('diary')
     current_timestamp = datetime.now()
     try:
-        with open ('Diary.txt', 'a') as file:
-            file.write(f'\n---{current_timestamp}---{complete_note}')
-            print('Wrote to file, Diary Closed?')
+            
+        myclient = pymongo.MongoClient("mongodb://localhost:27017/")
+        mydb = myclient["mydatabase"]
+        mycol = mydb["diaryDB"]
+
+        mydict = { "Timestamp": f"{current_timestamp}", "Note": f"{complete_note}" }
+
+        x = mycol.insert_one(mydict)
+
+        print(f'Wrote to ID: {x.inserted_id}')
     except:
-        print('failure to write')
+        print('Write Diary Failure')
+        pass
     
 def go2youtube():
     print('Executing')
