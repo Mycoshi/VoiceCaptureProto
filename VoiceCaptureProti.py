@@ -232,25 +232,30 @@ complete_note = ''
 def chatterbox(keyphrase):
     global complete_note
     looping = True
-    while looping == True:
+    complete_note = ""  # Initialize complete_note if not already defined
+
+    while looping:
         try:
             with sr.Microphone() as source:
                 audio = rec.listen(source, phrase_time_limit=10.0)
                 text = rec.recognize_google(audio).lower()
                 print(text)
                 complete_note += text + " "
-                print('note_text: ', text)
+                print('text: ', text)
+            
+            # Check for the keyphrase to end the loop
             if f"end {keyphrase}" in text:
                 complete_note = complete_note.replace(f"end {keyphrase}", "").strip()
                 print(complete_note)
-                looping = False
+                looping = False  # Stop the loop
         except sr.UnknownValueError:
-                print("Google Speech Recognition could not understand audio, restarting microphone...")
+            print("Google Speech Recognition could not understand audio, restarting microphone...")
         except sr.RequestError as e:
-                print(f"Could not request results from Google Speech Recognition service; {e}. Restarting microphone...")
+            print(f"Could not request results from Google Speech Recognition service; {e}. Restarting microphone...")
         except Exception as e:
-                print(f"An error occurred: {e}. Restarting microphone...")
-        return complete_note
+            print(f"An error occurred: {e}. Restarting microphone...")
+
+    return complete_note
 
 
 def keystroke():
