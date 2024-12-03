@@ -3,6 +3,7 @@ import os
 import sys
 import time
 from playsound import playsound
+#playsound is broken server side please install with  //// pip install playsound@git+https://github.com/taconi/playsound ////
 import webbrowser as web
 import urllib.request
 import re
@@ -321,15 +322,16 @@ def take_Notes():
     except:
         print('failure to write')
 
+DBclient = 'mongodb+srv://Mycoshi:Darkshad0ws1@cluster0.3io8q.mongodb.net/'
 def open_Diary():
     print('diary open')
     chatterbox('diary')
     current_timestamp = datetime.now()
     try:
             
-        myclient = pymongo.MongoClient("mongodb://localhost:27017/")
-        mydb = myclient["mydatabase"]
-        mycol = mydb["diaryDB"]
+        myclient = pymongo.MongoClient(f"{DBclient}")
+        mydb = myclient["DiaryDB"]
+        mycol = mydb["diaryDBCollection"]
 
         mydict = { "Timestamp": f"{current_timestamp}", "Note": f"{complete_note}" }
 
