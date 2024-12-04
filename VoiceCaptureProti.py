@@ -1,3 +1,13 @@
+'''
+   ####  ##  ###  ###  ##   ## ##   
+    ##   ##   ##    ## ##  ##   ##  
+    ##   ##   ##   # ## #  ##   ##  
+    ##   ##   ##   ## ##   ##   ##  
+##  ##   ##   ##   ##  ##  ##   ##  
+##  ##   ##   ##   ##  ##  ##   ##  
+ ## #     ## ##   ###  ##   ## ##   
+'''
+
 import speech_recognition as sr
 import os
 import sys
@@ -19,22 +29,26 @@ import threading
 import pymongo
 
 
-################################################################
-#ISSUES AND NEEDS SECTION
 
-#create dict of responses #NOT A DICT SQL DATABSE BECAUSE WE CAN UPDATE IT LIVE KEKW
+'''
+/* -------------------------------------------------------------------------- */
+/*                             Issues & Notes                                 */
+/* -------------------------------------------------------------------------- */
+'''
+
+#create dict of responses #NOT A DICT SQL DATABSE BECAUSE WE CAN UPDATE IT LIVE 
 #voice repsonse
 #Translator implementation
-#implent GPTREQUEST
-#playsound is fucked needs local path
 #need to be able to choose default web browser
 #Enable choice of videos of youtube.
-###### ISSUES ##########
+#Mongo is setup but needs to generate to a specific user
 
-#This is moved to Notes for speed
 
-################################################################
-#GLOBALS
+'''
+/* -------------------------------------------------------------------------- */
+/*                                Globals                                  */
+/* -------------------------------------------------------------------------- */
+'''
 rec = sr.Recognizer()
 text= '-1'   
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -71,8 +85,12 @@ def recognize_audio(recognizer, source):
         return None
             
 
-################################################################
-#Command Loop
+
+'''
+/* -------------------------------------------------------------------------- */
+/*                              Command Loop                                  */
+/* -------------------------------------------------------------------------- */
+'''
 def Core_Loop():
     print('Speak')
     while True:
@@ -120,8 +138,10 @@ def secondary_Loop():
                 elif 'close tab' in text:
                     close_Tab()
                 elif 'take notes' in text or 'open notes' in text:
+                    print('Opening Notes')
                     take_Notes()
                 elif 'open diary' in text:
+                    print('Opening Diary')
                     open_Diary()
                 elif 'add task' in text:
                      add_TasksWithVoice()
@@ -145,8 +165,12 @@ def secondary_Loop():
         except sr.RequestError as e:
             print(f'Error with the speech recognition service: {e}')
 
-            
-#Talking Loops
+
+'''
+/* -------------------------------------------------------------------------- */
+/*                            Speech to text                                  */
+/* -------------------------------------------------------------------------- */
+'''
 def start_talking():
     global Talking, talking_thread
     if Talking:
@@ -193,7 +217,12 @@ def talk_thread():
             print(f'Error during talking: {e}')
             time.sleep(1)
 
-#Internet Functions
+
+'''
+/* -------------------------------------------------------------------------- */
+/*                                Functions                                   */
+/* -------------------------------------------------------------------------- */
+'''
 def focus_vivaldi(url=""):
     try:
         # Attempt to connect to an existing Vivaldi window
@@ -226,9 +255,6 @@ def focus_vivaldi(url=""):
         else:
             print(f"Vivaldi executable not found at {vivaldi_path}")
 
-
-########################################################################
-#Functions
 complete_note = ''
 def chatterbox(keyphrase):
     global complete_note
@@ -367,8 +393,11 @@ def go2google():
 
 def go2Gpt():
         focus_vivaldi('https://chat.openai.com')
-##############################################################
-#RunTime
+'''
+/* -------------------------------------------------------------------------- */
+/*                                Runtime                                   */
+/* -------------------------------------------------------------------------- */
+'''
 
 secondary_Loop()
 
