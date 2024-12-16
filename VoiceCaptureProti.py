@@ -267,14 +267,14 @@ def chatterbox(keyphrase):
     while looping:
         try:
             with sr.Microphone() as source:
-                audio = rec.listen(source, phrase_time_limit=10.0)
+                audio = rec.listen(source, phrase_time_limit=5.0)
                 text = rec.recognize_google(audio).lower()
                 print(text)
                 complete_note += text + " "
                 print('text: ', text)
             
             # Check for the keyphrase to end the loop
-            if f"end {keyphrase}" in text:
+            if f"end {keyphrase}" or 'stop listening' in text:
                 complete_note = complete_note.replace(f"end {keyphrase}", "").strip()
                 print(complete_note)
                 looping = False  # Stop the loop
@@ -327,42 +327,25 @@ def run_Tasks():
 DBclient = 'mongodb+srv://Mycoshi:Darkshad0ws1@cluster0.3io8q.mongodb.net/'
 #TODO this needs to be in an env
 def take_Notes():
+    print('notes open')
+    chatterbox('note')
     complete_note = ''
-    looping = True
-    while looping == True:
-        try:
-            myclient = pymongo.MongoClient(f"{DBclient}")
-            mydb = myclient["Adatabase"]
-            mycol = mydb["NotesColletion"]
-            with sr.Microphone() as source:
-                print("Listening...")
-                audio = rec.listen(source, phrase_time_limit=10.0)
-                text = rec.recognize_google(audio).lower()
-                print(text)
-                complete_note += text + " "
-                if "stop listening" in text or 'end note':
-                    complete_note = complete_note.replace("stop listening", "").strip()
-                    looping = False
-                current_timestamp = datetime.now()
-                mydict = { "Timestamp": f"{current_timestamp}", "Note": f"{complete_note}" }
-
-                x = mycol.insert_one(mydict)
-                print(f'Wrote to ID: {x.inserted_id}')
-        except sr.UnknownValueError:
-            print("Google Speech Recognition could not understand audio, restarting microphone...")
-        except sr.RequestError as e:
-            print(f"Could not request results from Google Speech Recognition service; {e}. Restarting microphone...")
-        except Exception as e:
-            print(f"An error occurred: {e}. Restarting microphone...")
+    try:
+        myclient = pymongo.MongoClient(f"{DBclient}")
+        mydb = myclient["Adatabase"]
+        mycol = mydb["NotesColletion"]
+        current_timestamp = datetime.now()
+        mydict = { "Timestamp": f"{current_timestamp}", "Note": f"{complete_note}" }
+        x = mycol.insert_one(mydict)
+        print(f'Wrote to ID: {x.inserted_id}')
+    except sr.UnknownValueError:
+        print("Google Speech Recognition could not understand audio, restarting microphone...")
+    except sr.RequestError as e:
+        print(f"Could not request results from Google Speech Recognition service; {e}. Restarting microphone...")
+    except Exception as e:
+        print(f"An error occurred: {e}. Restarting microphone...")
 
     current_timestamp = datetime.now()
-    try:
-        with open ('Notes.txt', 'a') as file:
-            file.write(f'\n---{current_timestamp}---{complete_note}')
-            print('Wrote to file')
-    except:
-        print('failure to write')
-
 
 def open_Diary():
     print('diary open')
