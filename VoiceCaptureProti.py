@@ -42,11 +42,12 @@ import pymongo
 #need to be able to choose default web browser
 #Enable choice of videos of youtube.
 #Mongo is setup but needs to generate to a specific user
+#Tasklist not completed
 
 
 '''
 /* -------------------------------------------------------------------------- */
-/*                                Globals                                  */
+/*                                Globals                                     */
 /* -------------------------------------------------------------------------- */
 '''
 rec = sr.Recognizer()
@@ -64,8 +65,11 @@ base_sound_path = os.path.join(script_dir, 'assets', 'Sounds')
 for file in os.listdir(base_sound_path):
     full_path = os.path.join(base_sound_path, file)
 
-################################################################
-#Calibration
+'''
+/* -------------------------------------------------------------------------- */
+/*                               Calibration                                  */
+/* -------------------------------------------------------------------------- */
+'''
 def preprocess_audio(audio_data):
     audio_np = np.frombuffer(audio_data, dtype=np.int16)
     cleaned_audio = nr.reduce_noise(y=audio_np, sr=16000)
@@ -112,12 +116,11 @@ def Core_Loop():
             print(f'Error with the speech recognition service: {e}')
 
 def secondary_Loop():
-     playsound
      print('Command Loop')
      while True:
         try:
             with sr.Microphone() as source:
-                audio = rec.listen(source, phrase_time_limit=7.0)
+                audio = rec.listen(source, phrase_time_limit=5.0)
                 text = rec.recognize_google(audio).lower()
                 print(text)
 
@@ -349,6 +352,7 @@ def take_Notes():
         print('failure to write')
 
 DBclient = 'mongodb+srv://Mycoshi:Darkshad0ws1@cluster0.3io8q.mongodb.net/'
+#TODO this needs to be in an env
 def open_Diary():
     print('diary open')
     chatterbox('diary')
@@ -356,8 +360,8 @@ def open_Diary():
     try:
             
         myclient = pymongo.MongoClient(f"{DBclient}")
-        mydb = myclient["DiaryDB"]
-        mycol = mydb["diaryDBCollection"]
+        mydb = myclient["Adatabase"]
+        mycol = mydb["diaryDB"]
 
         mydict = { "Timestamp": f"{current_timestamp}", "Note": f"{complete_note}" }
 
