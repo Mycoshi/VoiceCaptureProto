@@ -322,11 +322,18 @@ def run_Tasks():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     juno_tasks_path = os.path.join(script_dir, 'Tasks', 'JunoTasks.py')
     os.system(f'python "{juno_tasks_path}"')
+
+#CLIENT
+DBclient = 'mongodb+srv://Mycoshi:Darkshad0ws1@cluster0.3io8q.mongodb.net/'
+#TODO this needs to be in an env
 def take_Notes():
     complete_note = ''
     looping = True
     while looping == True:
         try:
+            myclient = pymongo.MongoClient(f"{DBclient}")
+            mydb = myclient["Adatabase"]
+            mycol = mydb["NotesColletion"]
             with sr.Microphone() as source:
                 print("Listening...")
                 audio = rec.listen(source, phrase_time_limit=10.0)
@@ -336,6 +343,11 @@ def take_Notes():
                 if "stop listening" in text or 'end note':
                     complete_note = complete_note.replace("stop listening", "").strip()
                     looping = False
+                current_timestamp = datetime.now()
+                mydict = { "Timestamp": f"{current_timestamp}", "Note": f"{complete_note}" }
+
+                x = mycol.insert_one(mydict)
+                print(f'Wrote to ID: {x.inserted_id}')
         except sr.UnknownValueError:
             print("Google Speech Recognition could not understand audio, restarting microphone...")
         except sr.RequestError as e:
@@ -351,8 +363,7 @@ def take_Notes():
     except:
         print('failure to write')
 
-DBclient = 'mongodb+srv://Mycoshi:Darkshad0ws1@cluster0.3io8q.mongodb.net/'
-#TODO this needs to be in an env
+
 def open_Diary():
     print('diary open')
     chatterbox('diary')
