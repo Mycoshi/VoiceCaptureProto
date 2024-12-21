@@ -6,9 +6,9 @@ const DiaryList = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch data from the backend
     axios.get('http://localhost:5000/api/diary-entries')
       .then(response => {
+        console.log('API Response:', response.data); // Debugging
         setEntries(response.data);
         setLoading(false);
       })

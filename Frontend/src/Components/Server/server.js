@@ -20,7 +20,6 @@ mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 
 // Define schema for the "diaryDB" collection
 const DiarySchema = new mongoose.Schema({
-    _id: mongoose.Schema.Types.ObjectId, // MongoDB's ObjectId
     Timestamp: String,
     Note: String,
   }, { collection: 'diaryDB' }); // Explicitly set the collection name
@@ -31,8 +30,8 @@ const DiarySchema = new mongoose.Schema({
 app.get('/api/diary-entries', async (req, res) => {
   try {
     const entries = await DiaryEntry.find();
+    console.log('Entries:', entries);
     res.json(entries);
-    print(entries)
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
