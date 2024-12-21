@@ -100,7 +100,7 @@ def Core_Loop():
     while True:
         try:
             with sr.Microphone() as source:
-                audio = rec.listen(source, phrase_time_limit=3.0)
+                audio = rec.listen(source, phrase_time_limit=1.0)
                 text = rec.recognize_google(audio).lower()
                 print(text)
                 
@@ -122,7 +122,7 @@ def secondary_Loop():
             with sr.Microphone() as source:
                 audio = rec.listen(source, phrase_time_limit=5.0)
                 text = rec.recognize_google(audio).lower()
-                print(text)
+                print(f'text: {text}')
 
                 if '11:11' in text:
                     Core_Loop()
@@ -144,7 +144,7 @@ def secondary_Loop():
                     print('Opening Notes')
                     take_Notes()
                 elif 'open diary' in text:
-                    print('Opening Diary')
+                    print('...Opening Diary')
                     open_Diary()
                 elif 'add task' in text:
                      add_TasksWithVoice()
@@ -226,6 +226,34 @@ def talk_thread():
 /*                                Functions                                   */
 /* -------------------------------------------------------------------------- */
 '''
+complete_note = ''
+def chatterbox(keyphrase):
+    global complete_note
+    looping = True
+    complete_note = ""  # Initialize complete_note if not already defined
+
+    while looping:
+        try:
+            with sr.Microphone() as source:
+                audio = rec.listen(source, phrase_time_limit=5.0)
+                text = rec.recognize_google(audio).lower()
+                complete_note += text + " "
+                print(complete_note)
+            
+            # Check for the keyphrase to end the loop
+            if f"end {keyphrase}" in text or 'stop listening' in text:
+                complete_note = complete_note.replace(f"end {keyphrase}", "").strip()
+                looping = False  # Stop the loop
+        except sr.UnknownValueError:
+            print("Google Speech Recognition could not understand audio, restarting microphone...")
+        except sr.RequestError as e:
+            print(f"Could not request results from Google Speech Recognition service; {e}. Restarting microphone...")
+        except Exception as e:
+            print(f"An error occurred: {e}. Restarting microphone...")
+
+    return complete_note
+
+
 def focus_vivaldi(url=""):
     try:
         # Attempt to connect to an existing Vivaldi window
@@ -257,35 +285,6 @@ def focus_vivaldi(url=""):
                 print("Failed to focus on new Vivaldi window.")
         else:
             print(f"Vivaldi executable not found at {vivaldi_path}")
-
-complete_note = ''
-def chatterbox(keyphrase):
-    global complete_note
-    looping = True
-    complete_note = ""  # Initialize complete_note if not already defined
-
-    while looping:
-        try:
-            with sr.Microphone() as source:
-                audio = rec.listen(source, phrase_time_limit=5.0)
-                text = rec.recognize_google(audio).lower()
-                print(text)
-                complete_note += text + " "
-                print('text: ', text)
-            
-            # Check for the keyphrase to end the loop
-            if f"end {keyphrase}" or 'stop listening' in text:
-                complete_note = complete_note.replace(f"end {keyphrase}", "").strip()
-                print(complete_note)
-                looping = False  # Stop the loop
-        except sr.UnknownValueError:
-            print("Google Speech Recognition could not understand audio, restarting microphone...")
-        except sr.RequestError as e:
-            print(f"Could not request results from Google Speech Recognition service; {e}. Restarting microphone...")
-        except Exception as e:
-            print(f"An error occurred: {e}. Restarting microphone...")
-
-    return complete_note
 
 
 def keystroke():
@@ -348,7 +347,7 @@ def take_Notes():
     current_timestamp = datetime.now()
 
 def open_Diary():
-    print('diary open')
+    print('Diary open')
     chatterbox('diary')
     current_timestamp = datetime.now()
     try:

@@ -1,0 +1,22 @@
+.container{
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    align-items: center;    /* Center items horizontally */
+    justify-content: center; /* Center items vertically */
+    height: 100vh;          /* Full viewport height */
+    text-align: center;     /* Center text */
+  }
+  .calendar{
+      height: 100vh;
+      width:100%;
+      margin-bottom: 20px; /* Space between calendar and the date text */
+  }
+  .selected-date {
+    margin-top: 20px; /* Space between the calendar and the date text */
+    font-size: 1.2em; /* Optional: Increase the font size */
+    text-align: center; /* Center the text */
+  }
+  .tile{
+    font-size: 2vh;
+    padding:3vw;
+  }
