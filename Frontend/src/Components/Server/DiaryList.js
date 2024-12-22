@@ -24,6 +24,7 @@ const DiaryList = () => {
 
   return (
     <div>
+      <button onClick={console.log(entries)}>Data</button>
       <h1>Diary Entries</h1>
       <ul>
         {entries.map(entry => (
