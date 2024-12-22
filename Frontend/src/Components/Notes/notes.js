@@ -1,9 +1,10 @@
 import React from 'react'
 import DiaryList from '../Server/DiaryList.js'
+import styles from './Notes.module.css'
 
 const notes = () => {
   return (
-    <div>
+    <div className={styles.notesContainer}>
       <DiaryList/>
     </div>
   )

@@ -1,1 +1,84 @@
 /* CSS Module */
+
+.notesContainer {
+    margin: 50px;
+    background-color: azure;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 10px;
+}
+.notesContainer ul {
+    list-style-type: none;
+}
+.notesContainer li {
+    margin: 1rem;
+    border: 8px solid black;
+    padding: 5rem;
+    text-align: center;
+
+}
+  /* Header for the Diary List */
+  .diaryListHeader {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  /* Button to trigger console.log (optional) */
+  .dataButton {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 1rem;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .dataButton:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Diary List Styling */
+  .diaryList {
+    list-style-type: none; /* Remove bullet points */
+    padding: 0;
+    margin: 0;
+  }
+  
+  /* Each diary item */
+  .diaryItem {
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .diaryItem:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Labels for Timestamp and Notes */
+  .timestampLabel,
+  .noteLabel {
+    font-weight: bold;
+    color: #333;
+  }
+  
+  /* Style for Note content */
+  .diaryItem .noteLabel {
+    font-weight: normal;
+    color: #555;
+    display: inline-block;
+    margin-top: 10px;
+    word-wrap: break-word;
+  }

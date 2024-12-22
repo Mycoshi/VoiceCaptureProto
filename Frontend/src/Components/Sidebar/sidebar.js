@@ -1,6 +1,6 @@
 import React from "react";
 import Sidebar from "react-sidebar";
-import styles from './sidebar.module.css';
+import styles from './sidebar.module.css'; // Ensure you import the updated styles
 
 class SideBar extends React.Component {
   constructor(props) {
@@ -11,7 +11,8 @@ class SideBar extends React.Component {
   
     this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
   }
-  
+
+  // Toggle sidebar state
   onSetSidebarOpen(open) {
     this.setState({ sidebarOpen: open });
     this.props.onSetSidebarOpen(open); // Update the sidebar state in App
@@ -20,12 +21,15 @@ class SideBar extends React.Component {
   render() {
     return (
       <>
+        {/* Backdrop when sidebar is open */}
         {this.state.sidebarOpen && (
           <div 
             className={styles.backdrop} 
             onClick={() => this.onSetSidebarOpen(false)} 
           />
         )}
+
+        {/* Sidebar component */}
         <Sidebar
           sidebar={
             <div className={styles.SidebarContainer}>
@@ -68,6 +72,7 @@ class SideBar extends React.Component {
               border: "1px solid black",
               padding: "none",
               margin: "none",
+              zIndex: 1000
             },
           }}
         />

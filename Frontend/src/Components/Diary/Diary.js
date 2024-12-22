@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Calendar from 'react-calendar';
 import moment from 'moment';
-import styles from "./diary.module.css";
+import styles from './diary.module.css'; // Ensure the CSS file is imported
 import { differenceInCalendarDays } from 'date-fns';
 
 export default function Diary() {
@@ -17,7 +17,7 @@ export default function Diary() {
     const today = new Date(); // Get today's date
 
     // Disable future dates in month, year, and century views
-    if (view === 'month' || view === 'year' ||view === 'decade' || view === 'century') {
+    if (view === 'month' || view === 'year' || view === 'decade' || view === 'century') {
       return differenceInCalendarDays(date, today) > 0; // Disable future dates
     }
     return false; // Enable other views (like day view)
@@ -32,7 +32,7 @@ export default function Diary() {
         tileClassName={styles.tile}
         tileDisabled={tileDisabled} // Disable future dates
       />
-      <p>
+      <p className={styles.selectedDateText}>
         Current selected date is <b>{moment(dateState).format('MMMM Do YYYY')}</b>
       </p>
     </div>

@@ -1,6 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+require('dotenv').config();
+
 
 // Create Express app
 const app = express();
@@ -18,7 +20,7 @@ app.use((req, res, next) => {
 // MongoDB client and connection
 const PORT = 5000;
 const MONGO_URI = process.env.MONGO_URI
-
+console.log('Mongo URI:', MONGO_URI); // Debugging line to check if URI is being loaded
 mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(async () => {
     console.log('Connected to MongoDB (Database: Adatabase)');

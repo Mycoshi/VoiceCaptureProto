@@ -1,22 +1,92 @@
-.container{
-    display: flex;
-    flex-direction: column; /* Stack items vertically */
-    align-items: center;    /* Center items horizontally */
-    justify-content: center; /* Center items vertically */
-    height: 100vh;          /* Full viewport height */
-    text-align: center;     /* Center text */
-  }
-  .calendar{
-      height: 100vh;
-      width:100%;
-      margin-bottom: 20px; /* Space between calendar and the date text */
-  }
-  .selected-date {
-    margin-top: 20px; /* Space between the calendar and the date text */
-    font-size: 1.2em; /* Optional: Increase the font size */
-    text-align: center; /* Center the text */
-  }
-  .tile{
-    font-size: 2vh;
-    padding:3vw;
-  }
+/* Container for the Calendar */
+.container {
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* Basic Calendar Styling */
+.calendar {
+  width: 100%;
+  border: none; /* Remove border */
+  margin-bottom:10px ;
+  margin-top:10px ;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+/* Month View Styling */
+.react-calendar__month-view__days {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.react-calendar__month-view__days__day {
+  width: calc(100% / 7); /* 7 days per week */
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.react-calendar__month-view__days__day:hover {
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+/* Current Date Highlight */
+.react-calendar__tile--active {
+  background-color: #007bff;
+  color: white;
+  border-radius: 50%;
+  font-weight: bold;
+}
+
+/* Disabled Date Styling */
+.react-calendar__tile--disabled {
+  color: #d3d3d3;
+  pointer-events: none;
+}
+
+/* Tile Styling for Month View */
+.tile {
+  background-color: transparent !important;
+  font-size: 1rem;
+  padding: 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  font-weight: 500;
+  font-size: 2rem;
+}
+
+/* Date Hover Effects */
+.tile:hover {
+  transform: translateY(-2px);
+  color: #ffcc00;
+}
+
+/* Date Selection Styling */
+.react-calendar__tile--now {
+  background-color: #ffcc00;
+  color: black;
+  font-weight: bold;
+  border-radius: 50%;
+}
+
+/* Title Text for Selected Date */
+.selected-date-text {
+  font-size: 1.2rem;
+  color: #333;
+  font-weight: 500;
+  margin-top: 20px
+}
+.react-calendar__navigation{
+  display: flex;
+  margin: 10px;
+  padding: 15px;
+  height: 100px;
+}
