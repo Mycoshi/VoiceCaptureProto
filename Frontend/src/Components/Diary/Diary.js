@@ -42,25 +42,14 @@ export default function Diary() {
 
   // Custom tile content to display the bookmark icon if there is an entry
   const tileContent = (formattedDate) => {
-    if (entries && Array.isArray(entries)) {
-      return entries.map((entry, index) => {
-        if (entry.Timestamp && entry.Timestamp.includes(formattedDate)) {
-          return (
-            <div key={index} className={styles.tile}>
-              <div className={styles.icon}>
-                <FaBookBookmark size={18} />
-              </div>
-              <div className={styles.content}>
-                <p>{entry.content}</p> {/* Display entry content */}
-                <p className={styles.timestamp}>{entry.Timestamp}</p> {/* Display Timestamp */}
-              </div>
-            </div>
-          );
-        }
-        return null; // Do not render anything for non-matching entries
-      });
-    }
-    return <p>No entries found for this date.</p>;
+
+    <div key={''} className={styles.tile}>
+    <div className={styles.icon}>
+      <FaBookBookmark size={18} />
+      </div>
+    </div>
+ 
+    return <span className={styles.dot}></span>
   };
   // Render loading state or calendar
   return (
@@ -79,31 +68,7 @@ export default function Diary() {
           />
           <div>
             <h2>Entries for {value.toISOString().split('T')[0]}:</h2>
-            <div className={styles.entriesContainer}>
-    {entries && entries.length > 0 ? (
-      entries.map((entry, index) => {
-        // Check if entry's Timestamp matches the selected date
-        const formattedDate = value.toISOString().split('T')[0];
-        if (entry.Timestamp && entry.Timestamp.includes(formattedDate)) {
-          return (
-            <div key={index} className={styles.tile}>
-              <div className={styles.icon}>
-                <FaBookBookmark size={18} />
-              </div>
-              <div className={styles.content}>
-                {/* Safely render content */}
-                <p>{typeof entry.content === "string" ? entry.content : JSON.stringify(entry.content)}</p> 
-                <p className={styles.timestamp}>{entry.Timestamp}</p> {/* Display Timestamp */}
-              </div>
-            </div>
-          );
-        }
-        return null; // Skip entries that don't match the selected date
-      })
-    ) : (
-      <p>No entries found for this date.</p> // Fallback message if no entries exist
-    )}
-  </div>
+           
           </div>
           <p className={styles.selectedDateText}>
             Current selected date is <b>{moment(value).format('MMMM Do YYYY')}</b>
