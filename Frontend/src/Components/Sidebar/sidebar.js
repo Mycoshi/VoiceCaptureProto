@@ -1,6 +1,7 @@
 import React from "react";
 import Sidebar from "react-sidebar";
 import styles from './sidebar.module.css'; // Ensure you import the updated styles
+import Eyeball from '../../assets/Eyeball.png'
 
 class SideBar extends React.Component {
   constructor(props) {
@@ -33,6 +34,10 @@ class SideBar extends React.Component {
         <Sidebar
           sidebar={
             <div className={styles.SidebarContainer}>
+              <div className={styles.SidebarImgContainer}>
+                <img src={Eyeball} alt="Eyeball" />
+                <b></b>
+              </div>
               <ul className={styles.SidebarHead}>
                 <li><button onClick={() => {
                   this.onSetSidebarOpen(false);
