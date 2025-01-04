@@ -4,7 +4,7 @@ import moment from 'moment';
 import styles from './diary.module.css'; // Ensure the CSS file is imported
 import { differenceInCalendarDays } from 'date-fns';
 import axios from 'axios';
-import { FaBookBookmark } from "react-icons/fa6";
+import { FaBook } from "react-icons/fa6";
 
 export default function Diary() {
   const [value, setValue] = useState(new Date());
@@ -40,16 +40,13 @@ export default function Diary() {
     return false; // Enable other views (like day view)
   }
 
-  // Custom tile content to display the bookmark icon if there is an entry
   const tileContent = (formattedDate) => {
-
-    <div key={''} className={styles.tile}>
-    <div className={styles.icon}>
-      <FaBookBookmark size={18} />
+    return (
+      <div key={formattedDate} className={styles.tile}>
+        <div className={styles.icon}>
+        </div>
       </div>
-    </div>
- 
-    return <span className={styles.dot}></span>
+    );
   };
   // Render loading state or calendar
   return (
