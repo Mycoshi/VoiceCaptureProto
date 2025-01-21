@@ -51,6 +51,10 @@ class SideBar extends React.Component {
                   this.onSetSidebarOpen(false);
                   this.props.onComponentSelect('Diary'); // Open Diary component
                 }}>Diary</button></li>
+                     <li><button onClick={() => {
+                  this.onSetSidebarOpen(false);
+                  this.props.onComponentSelect('TempLog'); // Open Templog component
+                }}>TempLog</button></li>
                 <li><button onClick={() => {
                   this.onSetSidebarOpen(false);
                   this.props.onComponentSelect('Help'); // Open Help component
