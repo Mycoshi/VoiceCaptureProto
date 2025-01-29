@@ -47,7 +47,7 @@ export default function Diary() {
     if (entries[formattedDate]) {
       return (
         <div key={formattedDate} className={styles.tile}>
-          <span class="dot">p</span>
+          <FaRegAddressBook />
         </div>
       );
     }
