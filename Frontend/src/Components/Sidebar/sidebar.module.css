@@ -7,14 +7,19 @@
   }
   
   .SidebarContainer {
+    padding-top: 200px;
     width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center; /* Center vertically */
-    height: 100vh; /* Ensure the container takes the full height */
     background-color: #f7f7f7; /* Light background color for contrast */
+    -ms-overflow-style: none;
   }
+  .SidebarContainer::-webkit-scrollbar {
+    display: none;
+  }
+  
   
   /* Styling for list items inside the sidebar */
   .SidebarHead li {
