@@ -1,34 +1,134 @@
-.grid-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-  }
-  
-  .grid {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-  
-  .row {
-    display: flex;
-    gap: 2px;
-  }
-  
-  .cell {
-    width: 30px;
-    height: 30px;
-    border: 1px solid #ddd;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    font-size: 12px;
-  }
-  
-  .cell.header {
-    background-color: #f4f4f4;
-    font-weight: bold;
-    cursor: default;
-  }
+.gridContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+  padding: 0 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.cityForm {
+  display: flex;
+  margin-bottom: 20px;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.cityInput {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 200px;
+}
+
+.cityButton {
+  padding: 8px 16px;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.cityButton:hover {
+  background-color: #3a7bc8;
+}
+
+.yearSelect {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-left: 10px;
+}
+
+.locationInfo {
+  margin-bottom: 15px;
+  font-size: 16px;
+  color: #333;
+}
+
+.legend {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.colorBox {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #ddd;
+}
+
+.grid {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.row {
+  display: flex;
+}
+
+.cell {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.cellHeader {
+  width: 30px;
+  height: 30px;
+  background-color: #f4f4f4;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.selectedMonth {
+  background-color: #4a90e2;
+  color: white;
+}
+
+.error {
+  color: #f54242;
+  margin-bottom: 10px;
+}
+
+.loading {
+  color: #4a90e2;
+  margin-bottom: 10px;
+}
+
+.instructions {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.monthSelector {
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #666;
+}
