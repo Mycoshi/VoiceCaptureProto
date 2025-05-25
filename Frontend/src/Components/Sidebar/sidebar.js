@@ -65,7 +65,7 @@ const SideBar = ({ onSetSidebarOpen, onComponentSelect }) => {
 
       <Sidebar
         sidebar={
-          <div className={styles.SidebarContainer} ref={sidebarRef} style={{ overflowY: "auto", height: "100vh" }}>
+          <div className={styles.SidebarContainer} ref={sidebarRef}>
             <ul className={styles.SidebarHead}>
               {menuItems.map((item, index) => (
                 <li key={index}>
@@ -87,13 +87,26 @@ const SideBar = ({ onSetSidebarOpen, onComponentSelect }) => {
         styles={{
           sidebar: {
             background: "white",
-            height: "100vh",
+            height: "100%",
+            minHeight: "100vh",
             width: "15%",
             display: "flex",
+            flexDirection: "column",
             border: "1px solid black",
             zIndex: 1000,
+            position: "fixed",
+            top: 0,
+            left: 0,
+            bottom: 0,
             overflowY: "hidden", // Ensure internal container handles scroll
           },
+          content: {
+            position: "relative",
+            overflow: "visible",
+          },
+          overlay: {
+            zIndex: 999,
+          }
         }}
       />
     </>
